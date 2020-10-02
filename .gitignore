@@ -1,0 +1,8 @@
+node_modules/
+pkg
+pkg/
+pkg/dist-node
+pkg/dist-src
+pkg/dist-types
+pkg/dist-web
+pkg/package.json
