@@ -2,8 +2,9 @@
     "name": "@jessekelly/date-merge",
     "version": "0.0.1",
     "scripts": {
-        "build": "@pika/cli build",
-        "version": "npm run build"
+        "build": "npx @pika/cli build",
+        "version": "npm run build",
+        "test": "npx @pika/cli build"
     },
     "@pika/pack": {
         "pipeline": [
