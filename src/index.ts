@@ -14,7 +14,7 @@ const tags = tagNames
 
 /**
  * render
- * @desc Renders a react element to a dom id.
+ * @desc Renders a react element to the dom using a given selector.
  *
  * @param { ReactEl } e - React element to render
  * @param { string } selector  - Dom selector. E.g. "div#root"
@@ -24,8 +24,12 @@ export const render = (
     selector: string = "root",
 ) => ReactDom.render(e, document.querySelector(selector));
 
+const hMap = (el: typeof h) => (arr: Parameters<typeof h>[]) =>
+    arr.map((o, key) => el({ key }, o));
+
 module.exports = {
     h, // react-hyperscript h
-    render, // render react el
+    hMap, // generate an array of elements from an array of args
+    render, // render react element to dom
     tags, // dictionary of html tag fns
 };
