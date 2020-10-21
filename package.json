@@ -1,5 +1,5 @@
 {
-    "name": "@jessekelly/date-merge",
+    "name": "react-ts-fns",
     "version": "0.0.4",
     "scripts": {
         "build": "npx @pika/cli build",
@@ -31,7 +31,18 @@
         ]
     },
     "dependencies": {
-        "dayjs": "^1.9.1"
+        "@types/html-tag-names": "^1.1.0",
+        "@types/react": "^16.9.53",
+        "@types/react-dom": "^16.9.8",
+        "@types/react-hyperscript": "^3.0.4",
+        "fp-ts": "^2.8.4",
+        "html-tag-names": "^1.1.5",
+        "r-dom": "^2.4.0",
+        "react": "^17.0.0",
+        "react-dom": "^17.0.0",
+        "react-hyperscript": "^3.2.0",
+        "react-hyperscript-helpers": "^2.0.0",
+        "ts-hyperscript-helpers": "^1.0.1"
     },
     "devDependencies": {
         "@pika/cli": "^0.2.0",

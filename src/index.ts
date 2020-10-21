@@ -1,31 +1,26 @@
-const dayjs = require("dayjs");
+import * as h from "react-hyperscript";
+import * as tagNames from "html-tag-names";
+import { DOMElement, DOMAttributes } from "react";
+import { render } from "react-dom";
 
-export type DatePart =
-    | "year"
-    | "month"
-    | "date"
-    | "hour"
-    | "minute"
-    | "second"
-    | "millisecond";
+type OmitFirstArg<F> = F extends (x: any, ...args: infer P) => infer R
+    ? (...args: P) => R
+    : never;
 
-const dayParts: DatePart[] = ["year", "month", "date"];
-const timeParts: DatePart[] = ["hour", "minute", "second", "millisecond"];
+export const tags = tagNames
+    .map((tag: string) => ({
+        [tag]: (...args: Parameters<OmitFirstArg<typeof h>>) => h(tag, ...args),
+    }))
+    .reduce(Object.assign);
 
-/**
- * mergeDatesByPart :: DatePart -> (Date, Date) -> Date
- */
-export const mergeDatesByPart = (part: DatePart) => (x: Date, y: Date): Date =>
-    dayjs(x).set(part, dayjs(y).get(part));
+type ReactEl = DOMElement<DOMAttributes<Element>, Element>;
 
 /**
- * mergeDatesByParts :: DatePart[] -> (Date, Date) -> Date
+ * renderEl
+ * @desc Renders a react element to a dom id.
+ *
+ * @param { ReactEl } e - React element to render
+ * @param { string } selector  - Dom selector. E.g. "div#root"
  */
-const mergeDatesByParts = (parts: DatePart[]) => (x: Date, y: Date): Date => {
-    var d = x;
-    parts.forEach((p: DatePart) => mergeDatesByPart(p)(d, y));
-    return d;
-};
-
-export const mergeDays = mergeDatesByParts(dayParts);
-export const mergeTimes = mergeDatesByParts(timeParts);
+export const renderEl = (e: ReactEl, selector: string = "root") =>
+    render(e, document.querySelector(selector));
