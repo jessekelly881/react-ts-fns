@@ -1,14 +1,7 @@
 import * as h from "react-hyperscript";
 import * as tagNames from "html-tag-names";
 import * as ReactDom from "react-dom";
-import {
-    _capture,
-    reducerComponent,
-    make,
-    update,
-    Self,
-    StateUpdate,
-} from "react-fp-ts";
+import { _capture, reducerComponent, make, update, Self } from "react-fp-ts";
 
 type OmitFirstArg<F> = F extends (x: any, ...args: infer P) => infer R
     ? (...args: P) => R
