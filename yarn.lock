@@ -3123,6 +3123,11 @@ react-dom@^17.0.0:
     object-assign "^4.1.1"
     scheduler "^0.20.0"
 
+react-fp-ts@^2.1.0:
+  version "2.1.0"
+  resolved "https://registry.yarnpkg.com/react-fp-ts/-/react-fp-ts-2.1.0.tgz#2258be3f8da597c70c36855d1fb85ec5915955fd"
+  integrity sha512-+uyX+jqY4SaOfIIS+d3VKdf7ZqsB4PMjvGqwOs/XrGLamPBfrZSJAroVoWTJodQ5UnbFdsiEOjfMF8Vom3BpKQ==
+
 react-hyperscript-helpers@^2.0.0:
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/react-hyperscript-helpers/-/react-hyperscript-helpers-2.0.0.tgz#8fc891d3f50bc8b7b477ca955ef55bbaad2560c9"

@@ -1,0 +1,10 @@
+#+BEGIN_SRC js
+  import { tags } from 'react-ts-fns';
+  import { of } from 'react-dream'
+
+  const {button, em} = tags;
+
+  const redButton = of(p => button(p, em("Hello!")))
+        .addProps(() => ({style: {color: 'red'}}))
+        .fork(c => c());
+#+END_SRC

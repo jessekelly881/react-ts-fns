@@ -1,6 +1,7 @@
 import * as h from "react-hyperscript";
 import * as tagNames from "html-tag-names";
 import * as ReactDom from "react-dom";
+import { _capture, reducerComponent, make, update } from "react-fp-ts";
 
 type OmitFirstArg<F> = F extends (x: any, ...args: infer P) => infer R
     ? (...args: P) => R
@@ -27,8 +28,28 @@ export const render = (
 const hMap = (el: typeof h) => (arr: Parameters<typeof h>[]) =>
     arr.map((o, key) => el({ key }, o));
 
+const H = (name = "", stateObj = {}) => ({
+    // @param render :: state => H
+    of: render =>
+        H(name, {
+            ...stateObj,
+            render,
+        }),
+
+    // @param initialValue :: initialValue => H
+    initialState: initialState =>
+        H(name, {
+            ...stateObj,
+            initialState,
+        }),
+
+    render: () => (...args) =>
+        h(make(reducerComponent(name), stateObj), ...args),
+});
+
 module.exports = {
     h, // react-hyperscript h
+    H, // Stateful component
     hMap, // generate an array of elements from an array of args
     render, // render react element to dom
     tags, // dictionary of html tag fns
