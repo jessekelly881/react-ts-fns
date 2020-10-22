@@ -27,10 +27,8 @@ export const tags = tagNames
  * @param { ReactEl } e - React element to render
  * @param { string } selector  - Dom selector. E.g. "div#root"
  */
-export const render = (
-    e: Parameters<typeof ReactDom.render>[0],
-    selector: string = "root",
-) => ReactDom.render(e, document.querySelector(selector));
+export const render = (e: ReturnType<typeof h>, selector: string = "root") =>
+    ReactDom.render(e, document.querySelector(selector));
 
 export const hMap = (el: typeof h) => (arr: Parameters<typeof h>[]) =>
     arr.map((o, key) => el({ key }, o));
@@ -50,7 +48,7 @@ export function H<State, Action>(name = "", stateObj = {}) {
                 initialState,
             }),
 
-        reducer: (r: (s: HSelf, a: Action) => StateUpdate) => {
+        reducer: (r: (s: HSelf, a: Action) => ReturnType<typeof update>) => {
             const reducer = (s: HSelf, a: Action) => {
                 const ret = r(s, a);
                 return update(ret);
