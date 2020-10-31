@@ -1,7 +1,12 @@
 import * as h from "react-hyperscript";
 import * as tagNames from "html-tag-names";
 import * as ReactDom from "react-dom";
-import { _capture, reducerComponent, make, update, Self } from "react-fp-ts";
+import {
+    reducerComponent,
+    make,
+    updateAndSideEffects,
+    Self,
+} from "react-fp-ts";
 
 type OmitFirstArg<F> = F extends (x: any, ...args: infer P) => infer R
     ? (...args: P) => R
@@ -26,28 +31,52 @@ export const render = (e: ReturnType<typeof h>, selector: string = "root") =>
 export const hMap = (el: typeof h) => (arr: Parameters<typeof h>[]) =>
     arr.map((o, key) => el({ key }, o));
 
-export function H<State, Action>(name = "", stateObj = {}) {
-    type HSelf = Self<{}, State, Action>;
+export function H<HState, HAction>(name = "", stateObj = {}) {
+    type HSelf = Self<{}, HState, HAction>;
+    type HExec = (a: HAction) => void;
+    type HReducer = (s: HState, a: HAction) => HState;
+    type HCallback = (s: HState) => void;
 
     return {
         // @param render :: state => H
-        of: (render: (x: HSelf) => typeof h) =>
-            H(name, { ...stateObj, render }),
+        of: (r: (state: HState, exec: HExec) => ReturnType<typeof h>) => {
+            const render = (self: HSelf): ReturnType<typeof h> => {
+                const exec: HExec = (action: HAction) => _capture(self, action);
+
+                return r(self.state, exec);
+            };
+
+            return H(name, { ...stateObj, render });
+        },
 
         // @param initialValue :: initialValue => H
-        initialState: (initialState: State) =>
+        initialState: (initialState: HState) =>
             H(name, {
                 ...stateObj,
                 initialState,
             }),
 
-        reducer: (r: (s: HSelf, a: Action) => ReturnType<typeof update>) => {
-            const reducer = (s: HSelf, a: Action) => {
-                const ret = r(s, a);
-                return update(ret);
+        reducer: (r: HReducer) => {
+            const reducer = (p: HSelf, a: HAction) => {
+                const state = p.state;
+                return updateAndSideEffects(r(state, a), () =>
+                    stateObj.callbacks
+                        ? stateObj.callbacks.map((c: HCallback) => c(state))
+                        : null,
+                );
             };
 
             return H(name, { ...stateObj, reducer });
+        },
+
+        addCallback: (c: HCallback) => {
+            const callbacks = stateObj.callbacks
+                ? [...stateObj.callbacks, c]
+                : [c];
+            return H(name, {
+                ...stateObj,
+                callbacks,
+            });
         },
 
         create: () => () => h(make(reducerComponent(name), stateObj)),
