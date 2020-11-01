@@ -14,6 +14,7 @@ type OmitFirstArg<F> = F extends (x: any, ...args: infer P) => infer R
     : never;
 
 type HtmlTagArgs = Parameters<OmitFirstArg<typeof h>> | [];
+type HtmlTagArg = HtmlTagArgs[0] | HtmlTagArgs[1];
 type HtmlTagFn = (...args: HtmlTagArgs) => ReturnType<typeof h>;
 
 export const tags = tagNames
@@ -35,10 +36,10 @@ export const render = (e: ReturnType<typeof h>, selector: string = "root") =>
 export const hMap = (
     el: HtmlTagFn,
     emptyEl: ReturnType<typeof h> | null = null,
-) => (arr: Parameters<typeof h>[]) =>
+) => (arr: HtmlTagArg[]) =>
     arr.length === 0
         ? emptyEl
-        : arr.map((o: Parameters<typeof h>, key) => el({ key }, o));
+        : arr.map((o: HtmlTagArg, key) => el({ key }, o));
 
 export function H<HState, HAction>(name = "", stateObj = {}) {
     type HSelf = Self<{}, HState, HAction>;
@@ -55,12 +56,12 @@ export function H<HState, HAction>(name = "", stateObj = {}) {
                 return r(self.state, exec);
             };
 
-            return H(name, { ...stateObj, render });
+            return H<HState, HAction>(name, { ...stateObj, render });
         },
 
         // @param initialValue :: initialValue => H
         initialState: (initialState: HState) =>
-            H(name, {
+            H<HState, HAction>(name, {
                 ...stateObj,
                 initialState,
             }),
@@ -75,14 +76,14 @@ export function H<HState, HAction>(name = "", stateObj = {}) {
                 );
             };
 
-            return H(name, { ...stateObj, reducer });
+            return H<HState, HAction>(name, { ...stateObj, reducer });
         },
 
         addCallback: (c: HCallback) => {
             const callbacks = stateObj.callbacks
                 ? [...stateObj.callbacks, c]
                 : [c];
-            return H(name, {
+            return H<HState, HAction>(name, {
                 ...stateObj,
                 callbacks,
             });
