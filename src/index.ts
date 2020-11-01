@@ -1,5 +1,5 @@
-import * as h from "react-hyperscript";
-import * as tagNames from "html-tag-names";
+import h from "react-hyperscript";
+import tagNames from "html-tag-names";
 import * as ReactDom from "react-dom";
 import {
     _capture,
@@ -17,7 +17,7 @@ export const tags = tagNames
     .map((tag: string) => ({
         [tag]: (...args: Parameters<OmitFirstArg<typeof h>>) => h(tag, ...args),
     }))
-    .reduce(Object.assign);
+    .reduce((x, a) => Object.assign({}, a, x));
 
 /**
  * render
@@ -29,8 +29,11 @@ export const tags = tagNames
 export const render = (e: ReturnType<typeof h>, selector: string = "root") =>
     ReactDom.render(e, document.querySelector(selector));
 
-export const hMap = (el: typeof h) => (arr: Parameters<typeof h>[]) =>
-    arr.map((o, key) => el({ key }, o));
+export const hMap = (
+    el: typeof h,
+    emptyEl: ReturnType<typeof h> | null = null,
+) => (arr: Parameters<typeof h>[]) =>
+    arr.length === 0 ? emptyEl : arr.map((o, key) => el({ key }, o));
 
 export function H<HState, HAction>(name = "", stateObj = {}) {
     type HSelf = Self<{}, HState, HAction>;

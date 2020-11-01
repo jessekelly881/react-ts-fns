@@ -7,3 +7,5 @@ pkg/dist-types
 pkg/dist-web
 pkg/package.json
 yarn-error.log
+.cache
+dist

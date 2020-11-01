@@ -4,6 +4,7 @@
     "scripts": {
         "build": "npx @pika/cli build",
         "version": "npm run build",
+        "run:test": "parcel test/index.html",
         "test": "npx @pika/cli build"
     },
     "@pika/pack": {
@@ -37,6 +38,7 @@
         "@types/react-hyperscript": "^3.0.4",
         "fp-ts": "^2.8.4",
         "html-tag-names": "^1.1.5",
+        "parcel": "^1.12.4",
         "r-dom": "^2.4.0",
         "react": "^17.0.0",
         "react-dom": "^17.0.0",
