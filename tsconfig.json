@@ -1,6 +1,8 @@
 {
     "include": ["src", "test"],
+    "exclude": ["node_modules"],
     "compilerOptions": {
-        "allowSyntheticDefaultImports": true
+        "allowSyntheticDefaultImports": true,
+        "esModuleInterop": true
     }
 }
