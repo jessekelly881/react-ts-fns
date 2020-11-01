@@ -2,6 +2,7 @@ import * as h from "react-hyperscript";
 import * as tagNames from "html-tag-names";
 import * as ReactDom from "react-dom";
 import {
+    _capture,
     reducerComponent,
     make,
     updateAndSideEffects,
