@@ -32,12 +32,12 @@ const clickCounter = H<ClickCounterState, ClickCounterAction>("Counter")
     .of(({ count, error }, exec) =>
         div({}, [
             hMap(span, span({}, "Empty"))(arrayN(count)),
-            br({}),
-            br({}),
+            br(),
+            br(),
             button({ onClick: exec("inc") }, "inc"),
             button({ onClick: exec("dec") }, "dec"),
             button({ onClick: exec("reset") }, "reset"),
-            br({}),
+            br(),
             error ? errorText(error) : null,
         ]),
     )

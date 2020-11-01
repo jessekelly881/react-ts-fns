@@ -1,6 +1,6 @@
 import h from "react-hyperscript";
 import tagNames from "html-tag-names";
-import * as ReactDom from "react-dom";
+import ReactDom from "react-dom";
 import {
     _capture,
     reducerComponent,
@@ -13,9 +13,12 @@ type OmitFirstArg<F> = F extends (x: any, ...args: infer P) => infer R
     ? (...args: P) => R
     : never;
 
+type HtmlTagArgs = Parameters<OmitFirstArg<typeof h>> | [];
+type HtmlTagFn = (...args: HtmlTagArgs) => ReturnType<typeof h>;
+
 export const tags = tagNames
     .map((tag: string) => ({
-        [tag]: (...args: Parameters<OmitFirstArg<typeof h>>) => h(tag, ...args),
+        [tag]: (...args: HtmlTagArgs) => h(tag, ...args),
     }))
     .reduce((x, a) => Object.assign({}, a, x));
 
@@ -30,10 +33,12 @@ export const render = (e: ReturnType<typeof h>, selector: string = "root") =>
     ReactDom.render(e, document.querySelector(selector));
 
 export const hMap = (
-    el: typeof h,
+    el: HtmlTagFn,
     emptyEl: ReturnType<typeof h> | null = null,
 ) => (arr: Parameters<typeof h>[]) =>
-    arr.length === 0 ? emptyEl : arr.map((o, key) => el({ key }, o));
+    arr.length === 0
+        ? emptyEl
+        : arr.map((o: Parameters<typeof h>, key) => el({ key }, o));
 
 export function H<HState, HAction>(name = "", stateObj = {}) {
     type HSelf = Self<{}, HState, HAction>;
@@ -86,11 +91,3 @@ export function H<HState, HAction>(name = "", stateObj = {}) {
         create: () => () => h(make(reducerComponent(name), stateObj)),
     };
 }
-
-module.exports = {
-    h, // react-hyperscript h
-    H, // Stateful component
-    hMap, // generate an array of elements from an array of args
-    render, // render react element to dom
-    tags, // dictionary of html tag fns
-};

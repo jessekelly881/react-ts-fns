@@ -1,1 +1,6 @@
-{ "include": ["src"] }
+{
+    "include": ["src", "test"],
+    "compilerOptions": {
+        "allowSyntheticDefaultImports": true
+    }
+}
