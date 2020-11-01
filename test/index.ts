@@ -1,4 +1,4 @@
-import { render, tags, H, hMap } from "../src";
+import { render, tags, H, hMap } from "../src/index";
 
 const { button, div, span, br, small } = tags;
 

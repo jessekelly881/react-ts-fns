@@ -15,7 +15,7 @@ type OmitFirstArg<F> = F extends (x: any, ...args: infer P) => infer R
 
 type HtmlTagArgs = Parameters<OmitFirstArg<typeof h>> | [];
 type HtmlTagArg = HtmlTagArgs[0] | HtmlTagArgs[1];
-type HtmlTagFn = (...args: HtmlTagArgs) => ReturnType<typeof h>;
+type HtmlTagFn = (...args: HtmlTagArg[]) => ReturnType<typeof h>;
 
 export const tags = tagNames
     .map((tag: string) => ({
