@@ -41,7 +41,17 @@ export const hMap = (
         ? emptyEl
         : arr.map((o: HtmlTagArg, key) => el({ key }, o));
 
-export function H<HState, HAction>(name = "", stateObj = {}) {
+interface StateObj<P> {
+    callbacks: any[];
+    initialState?: P;
+    reducer?: any;
+    render?: any;
+}
+
+export function H<HState, HAction>(
+    name = "",
+    stateObj: StateObj<HState> = { callbacks: [] },
+) {
     type HSelf = Self<{}, HState, HAction>;
     type HExec = (a: HAction) => void;
     type HReducer = (s: HState, a: HAction) => HState;
@@ -89,6 +99,8 @@ export function H<HState, HAction>(name = "", stateObj = {}) {
             });
         },
 
-        create: () => () => h(make(reducerComponent(name), stateObj)),
+        create: () => {
+            return () => h(make(reducerComponent(name), stateObj));
+        },
     };
 }
