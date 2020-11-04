@@ -13,13 +13,13 @@ type OmitFirstArg<F> = F extends (x: any, ...args: infer P) => infer R
     ? (...args: P) => R
     : never;
 
-type HtmlTagArgs = Parameters<OmitFirstArg<typeof h>> | [];
+type HtmlTagArgs = Parameters<OmitFirstArg<typeof h>>;
 type HtmlTagArg = HtmlTagArgs[0] | HtmlTagArgs[1];
 type HtmlTagFn = (...args: HtmlTagArg[]) => ReturnType<typeof h>;
 
 export const tags = tagNames
     .map((tag: string) => ({
-        [tag]: (...args: HtmlTagArgs) => h(tag, ...args),
+        [tag]: h.bind(null, tag),
     }))
     .reduce((x, a) => Object.assign({}, a, x));
 
