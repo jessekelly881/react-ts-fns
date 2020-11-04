@@ -100,6 +100,7 @@ export function H<HState, HAction>(
         },
 
         create: () => {
+            // @ts-ignore
             return () => h(make(reducerComponent(name), stateObj));
         },
     };
