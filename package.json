@@ -27,7 +27,18 @@
                 "@pika/plugin-build-types"
             ],
             [
-                "@pika/plugin-bundle-web"
+                "@pika/plugin-bundle-web",
+                {
+                    "namedExports": {
+                        "node_modules/react-fp-ts/build/index.js": [
+                            "_capture",
+                            "updateAndSideEffects",
+                            "make",
+                            "reducerComponent",
+                            "Self"
+                        ]
+                    }
+                }
             ]
         ]
     },
