@@ -105,3 +105,5 @@ export function H<HState, HAction>(
         },
     };
 }
+
+export { default as h } from "react-hyperscript";
