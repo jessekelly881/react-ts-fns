@@ -1,109 +1,44 @@
-import h from "react-hyperscript";
-import tagNames from "html-tag-names";
-import ReactDom from "react-dom";
 import {
-    _capture,
-    reducerComponent,
-    make,
-    updateAndSideEffects,
-    Self,
-} from "react-fp-ts";
+    createElement,
+    Fragment,
+    Attributes,
+    FunctionComponent,
+    ComponentClass,
+    ReactNode,
+} from "react";
+import tagNames from "html-tag-names";
 
-type OmitFirstArg<F> = F extends (x: any, ...args: infer P) => infer R
-    ? (...args: P) => R
-    : never;
+type El = FunctionComponent | ComponentClass | string;
+type Props = Attributes | null;
+type Children = ReactNode | ReactNode[];
 
-type HtmlTagArgs = Parameters<OmitFirstArg<typeof h>>;
-type HtmlTagArg = HtmlTagArgs[0] | HtmlTagArgs[1];
-type HtmlTagFn = (...args: HtmlTagArg[]) => ReturnType<typeof h>;
-
-export const tags = tagNames
-    .map((tag: string) => ({
-        [tag]: h.bind(null, tag),
-    }))
-    .reduce((x, a) => Object.assign({}, a, x));
-
-/**
- * render
- * @desc Renders a react element to the dom using a given selector.
- *
- * @param { ReactEl } e - React element to render
- * @param { string } selector  - Dom selector. E.g. "div#root"
- */
-export const render = (e: ReturnType<typeof h>, selector: string = "root") =>
-    ReactDom.render(e, document.querySelector(selector));
-
-export const hMap = (
-    el: HtmlTagFn,
-    emptyEl: ReturnType<typeof h> | null = null,
-) => (arr: HtmlTagArg[]) =>
-    arr.length === 0
-        ? emptyEl
-        : arr.map((o: HtmlTagArg, key) => el({ key }, o));
-
-interface StateObj<P> {
-    callbacks: any[];
-    initialState?: P;
-    reducer?: any;
-    render?: any;
+interface GeneratorConfig {
+    propsTransform: (props: Props) => Props;
 }
 
-export function H<HState, HAction>(
-    name = "",
-    stateObj: StateObj<HState> = { callbacks: [] },
-) {
-    type HSelf = Self<{}, HState, HAction>;
-    type HExec = (a: HAction) => void;
-    type HReducer = (s: HState, a: HAction) => HState;
-    type HCallback = (s: HState) => void;
+const defaultConfig = {
+    propsTransform: (p: Props) => p,
+};
 
-    return {
-        // @param render :: state => H
-        of: (r: (state: HState, exec: HExec) => ReturnType<typeof h>) => {
-            const render = (self: HSelf): ReturnType<typeof h> => {
-                const exec: HExec = (action: HAction) => _capture(self, action);
+const elGenerator = (config: Partial<GeneratorConfig> = {}) => {
+    const { propsTransform } = { ...defaultConfig, ...config };
 
-                return r(self.state, exec);
-            };
-
-            return H<HState, HAction>(name, { ...stateObj, render });
-        },
-
-        // @param initialValue :: initialValue => H
-        initialState: (initialState: HState) =>
-            H<HState, HAction>(name, {
-                ...stateObj,
-                initialState,
-            }),
-
-        reducer: (r: HReducer) => {
-            const reducer = (p: HSelf, a: HAction) => {
-                const state = p.state;
-                return updateAndSideEffects(r(state, a), () =>
-                    stateObj.callbacks
-                        ? stateObj.callbacks.map((c: HCallback) => c(state))
-                        : null,
-                );
-            };
-
-            return H<HState, HAction>(name, { ...stateObj, reducer });
-        },
-
-        addCallback: (c: HCallback) => {
-            const callbacks = stateObj.callbacks
-                ? [...stateObj.callbacks, c]
-                : [c];
-            return H<HState, HAction>(name, {
-                ...stateObj,
-                callbacks,
-            });
-        },
-
-        create: () => {
-            // @ts-ignore
-            return () => h(make(reducerComponent(name), stateObj));
-        },
+    const h_ = (el: El) => (p?: Props, c?: Children) => {
+        const props = propsTransform(p);
+        return createElement(el, props, c);
     };
-}
 
-export { default as h } from "react-hyperscript";
+    const h = h_;
+
+    const tags_ = tagNames
+        .map((tag: string) => ({ [tag]: h(tag) })) // Maps each tag, e.g. a to {a: h("a")}
+        .reduce((x, a) => Object.assign({}, a, x)); // Takes each mapped value and reduces it to a single object
+
+    const tags = Object.assign(tags_, { _: h(Fragment) }); // Adds React.Fragment as _
+
+    return { h, tags };
+};
+
+const { h, tags } = elGenerator();
+
+export { h, tags, elGenerator };
