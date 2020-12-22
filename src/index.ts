@@ -10,7 +10,7 @@ import tagNames from "html-tag-names";
 
 type El = FunctionComponent | ComponentClass | string;
 type Props = Attributes | null;
-type Children = ReactNode | ReactNode[];
+type Children = ReactNode[];
 
 interface GeneratorConfig {
     propsTransform: (props: Props) => Props;
@@ -23,7 +23,7 @@ const defaultConfig = {
 const elGenerator = (config: Partial<GeneratorConfig> = {}) => {
     const { propsTransform } = { ...defaultConfig, ...config };
 
-    const h_ = (el: El) => (p?: Props, c?: Children) => {
+    const h_ = (el: El) => (p?: Props, ...c: Children) => {
         const props = propsTransform(p);
         return createElement(el, props, c);
     };
