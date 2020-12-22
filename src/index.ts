@@ -23,7 +23,10 @@ const defaultConfig = {
 const elGenerator = (config: Partial<GeneratorConfig> = {}) => {
     const { propsTransform } = { ...defaultConfig, ...config };
 
-    const h_ = (el: El) => (p?: Props, ...c: Children) => {
+    const h_ = (el: El) => (
+        p?: Props,
+        ...c: Children
+    ): ReturnType<typeof createElement> => {
         const props = propsTransform(p);
         return createElement.apply(React, [el, props, ...c]);
     };
