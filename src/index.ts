@@ -1,4 +1,4 @@
-import {
+import React, {
     createElement,
     Fragment,
     Attributes,
@@ -25,7 +25,7 @@ const elGenerator = (config: Partial<GeneratorConfig> = {}) => {
 
     const h_ = (el: El) => (p?: Props, ...c: Children) => {
         const props = propsTransform(p);
-        return createElement(el, props, c);
+        return createElement.apply(React, [el, props, ...c]);
     };
 
     const h = h_;
